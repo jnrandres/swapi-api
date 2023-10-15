@@ -1,0 +1,77 @@
+service: sls-api-starwars
+
+frameworkVersion: "3"
+
+provider:
+  stage: ${opt:stage, 'dev'}
+  name: aws
+  runtime: nodejs16.x
+  region: us-east-1
+  memorySize: 128
+  environment:
+    NODE_ENV: ${opt:stage, 'dev'}
+    DATABASE_USER: ${ssm:/starwars/database/user}
+    DATABASE_PASSWORD: ${ssm:/starwars/database/pass}
+    DATABASE_HOST: ${ssm:/starwars/database/host}
+    DATABASE_PORT: ${ssm:/starwars/database/port}
+    DATABASE_NAME: ${ssm:/starwars/database/name}
+    DYNAMODB_TABLE_NAME: ${self:custom.PlanetsTable.name}
+  iamRoleStatements:
+    - ${file(iam/PlanetsTableIAM.yml):PlanetsTableIAM}
+
+resources:
+  Resources:
+    PlanetsTable: ${file(resources/PlanetsTable.yml):PlanetsTable}
+
+custom:
+  stage: ${opt:stage, 'dev'}
+  webpack:
+    includeModules:
+      forceExclude:
+        - typescript
+    webpackConfig: ./webpack.config.js
+    excludeFiles: src/**/*.spec.js
+    packager: "npm"
+  PlanetsTable:
+    name: !Ref PlanetsTable
+    arn: !GetAtt PlanetsTable.Arn
+
+functions:
+  get-planets:
+    handler: src/planets/v1/index.getPlanetsHandler
+    events:
+      - http:
+          path: /v1/planets
+          method: get
+          cors: true
+  get-planet:
+    handler: src/planets/v1/index.getPlanetHandler
+    events:
+      - http:
+          path: /v1/planets/{id}
+          method: get
+          cors: true
+  get-planets-swapi:
+    handler: src/planets/v1/index.getPlanetsSwapiHandler
+    events:
+      - http:
+          path: /v1/planets/swapi
+          method: get
+          cors: true
+  get-planet-swapi:
+    handler: src/planets/v1/index.getPlanetSwapiHandler
+    events:
+      - http:
+          path: /v1/planets/swapi/{id}
+          method: get
+          cors: true
+  create-planet:
+    handler: src/planets/v1/index.createPlanetHandler
+    events:
+      - http:
+          path: /v1/planets
+          method: post
+          cors: true
+
+plugins:
+  - serverless-webpack

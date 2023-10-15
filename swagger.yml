@@ -1,0 +1,213 @@
+openapi: 3.0.3
+info:
+  title: API-Star Wars
+  description: API for the management of Star Wars planets
+  version: 1.0.0
+servers:
+  - url: https://endpoint/dev
+tags:
+  - name: planet
+    description: Operations about planet
+paths:
+  /v1/planets:
+    post:
+      tags:
+        - planet
+      summary: Create a planet
+      operationId: createPlanet
+      requestBody:
+        description: Planet object that needs to be added to the store
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/PlanetCreate"
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Planet"
+    get:
+      tags:
+        - planet
+      summary: Get all planets
+      operationId: getPlanet
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Planet"
+  "/v1/planets/{id}":
+    get:
+      tags:
+        - planet
+      summary: Get planet by id
+      operationId: getPlanetById
+      parameters:
+        - name: id
+          in: path
+          description: ID of planet to return
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/Planet"
+
+  "/v1/planets/swapi":
+    get:
+      tags:
+        - planet
+      summary: Get planet from swapi by page
+      operationId: getPlanetByPage
+      parameters:
+        - name: page
+          in: query
+          description: Page of swapi to return
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Planet"
+  "/v1/planets/swapi/{id}":
+    get:
+      tags:
+        - planet
+      summary: Get planet from swapi by id
+      operationId: getPlanetByIdSwapi
+      parameters:
+        - name: id
+          in: path
+          description: ID of planet to return
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/Planet"
+components:
+  schemas:
+    Planet:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+        nombre:
+          type: string
+          example: Tatooine
+        periodo_rotacion:
+          type: string
+          example: "23"
+        periodo_orbital:
+          type: string
+          example: "304"
+        diametro:
+          type: string
+          example: "10465"
+        clima:
+          type: string
+          example: arid
+        gravedad:
+          type: string
+          example: "1 standard"
+        terreno:
+          type: string
+          example: desert
+        superficie_agua:
+          type: string
+          example: "1"
+        poblacion:
+          type: string
+          example: "200000"
+        residentes:
+          type: array
+          items:
+            $ref: "#/components/schemas/Resident"
+        peliculas:
+          type: array
+          items:
+            $ref: "#/components/schemas/Pelicula"
+        creado:
+          type: string
+          example: "2014-12-09T13:50:49.641Z"
+        editado:
+          type: string
+          example: "2014-12-09T13:50:49.641Z"
+        url:
+          type: string
+          example: "https://swapi.py4e.com/api/planets/1/"
+    PlanetCreate:
+      type: object
+      properties:
+        nombre:
+          type: string
+          example: Tatooine
+        periodo_rotacion:
+          type: string
+          example: "23"
+        periodo_orbital:
+          type: string
+          example: "304"
+        diametro:
+          type: string
+          example: "10465"
+        clima:
+          type: string
+          example: arid
+        gravedad:
+          type: string
+          example: "1 standard"
+        terreno:
+          type: string
+          example: desert
+        superficie_agua:
+          type: string
+          example: "1"
+        poblacion:
+          type: string
+          example: "200000"
+        residentes:
+          type: array
+          items:
+            $ref: "#/components/schemas/Resident"
+        peliculas:
+          type: array
+          items:
+            $ref: "#/components/schemas/Pelicula"
+        url:
+          type: string
+          example: "https://swapi.py4e.com/api/planets/1/"
+      required:
+        - nombre
+    Resident:
+      type: string
+      example: "https://swapi.py4e.com/api/people/1/"
+    Pelicula:
+      type: string
+      example: "https://swapi.py4e.com/api/films/1/"

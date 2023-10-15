@@ -1,0 +1,10 @@
+PlanetsTableIAM:
+  Effect: Allow
+  Action:
+    - dynamodb:PutItem
+    - dynamodb:UpdateItem
+    - dynamodb:GetItem
+    - dynamodb:Query
+    - dynamodb:Scan
+  Resource:
+    - ${self:custom.PlanetsTable.arn}
